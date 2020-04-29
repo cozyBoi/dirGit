@@ -19,11 +19,11 @@
 #define MAX_BUTTON 9
 #define TEXT_ALPHA_MODE 0
 #define TEXT_NUM_MODE 1
-#define FND_DEVICE "/dev/fpga_fnd"
-#define LED_DEVICE "/dev/fpga_led"
-#define FPGA_TEXT_LCD_DEVICE "/dev/fpga_text_lcd"
+#define FND_DEVICE "/dev/input/fpga_fnd"
+#define LED_DEVICE "/dev//input/fpga_led"
+#define FPGA_TEXT_LCD_DEVICE "/dev//input/fpga_text_lcd"
 
-#define FPGA_DOT_DEVICE "/dev/fpga_dot"
+#define FPGA_DOT_DEVICE "/dev//input/fpga_dot"
 
 unsigned char fpga_number[11][10] = {
 	{ 0x3e,0x7f,0x63,0x73,0x73,0x6f,0x67,0x63,0x7f,0x3e }, // 0
@@ -214,7 +214,7 @@ int main() {
 
 	unsigned char push_sw_buff[MAX_BUTTON];
 
-	dev = open("/dev/fpga_push_switch", O_RDWR);
+	dev = open("/dev/input/fpga_push_switch", O_RDWR);
 	if (dev<0) {
 		printf("Device Open Error\n");
 		close(dev);
