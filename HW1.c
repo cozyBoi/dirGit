@@ -19,11 +19,11 @@
 #define MAX_BUTTON 9
 #define TEXT_ALPHA_MODE 0
 #define TEXT_NUM_MODE 1
-#define FND_DEVICE "/dev/input/fpga_fnd"
-#define LED_DEVICE "/dev//input/fpga_led"
-#define FPGA_TEXT_LCD_DEVICE "/dev//input/fpga_text_lcd"
+#define FND_DEVICE "/dev/fpga_fnd"
+#define LED_DEVICE "/dev/fpga_led"
+#define FPGA_TEXT_LCD_DEVICE "/dev/fpga_text_lcd"
 
-#define FPGA_DOT_DEVICE "/dev//input/fpga_dot"
+#define FPGA_DOT_DEVICE "/dev/fpga_dot"
 
 unsigned char fpga_number[11][10] = {
 	{ 0x3e,0x7f,0x63,0x73,0x73,0x6f,0x67,0x63,0x7f,0x3e }, // 0
@@ -230,6 +230,7 @@ int main() {
 
         while (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 115) {
 			//volume +, mode change
+            rd = read(fd, ev, size * BUFF_SIZE);
             if (ev[0].type == 1 && ev[0].value == KEY_RELEASE && ev[0].code == 115) {
                 mode = (mode + 1) % 4;
                 reset_para();
@@ -238,6 +239,7 @@ int main() {
 		}
 		while (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 114) {
 			//volume -, mode change
+            rd = read(fd, ev, size * BUFF_SIZE);
             if (ev[0].type == 1 && ev[0].value == KEY_RELEASE && ev[0].code == 114) {
                 mode = mode ? mode - 1 : 3;
                 reset_para();
