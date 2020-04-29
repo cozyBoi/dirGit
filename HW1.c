@@ -12,6 +12,7 @@
 #include <termios.h>
 #include <signal.h>
 #include <sys/ioctl.h>
+#include <time.h>
 
 #define BUFF_SIZE 64
 #define KEY_RELEASE 0
@@ -23,7 +24,6 @@
 #define FND_DEVICE "/dev/fpga_fnd"
 #define LED_DEVICE "/dev/fpga_led"
 #define FPGA_TEXT_LCD_DEVICE "/dev/fpga_text_lcd"
-
 #define FPGA_DOT_DEVICE "/dev/fpga_dot"
 
 unsigned char fpga_number[11][10] = {
@@ -47,8 +47,8 @@ void user_signal1(int sig)
 	quit = 1;
 }
 
-char FND[4], LED[8], TextLED[2][30], Draw_Matrix[10][8];
-int dot = 0, Count_jinsu = 10, Count_total = 0, Text_len = 1, Text_mode = TEXT_ALPHA_MODE, i;
+char FND[4], LED[8], TextLED[2][100], Draw_Matrix[10][8];
+int dot = 0, Count_jinsu = 10, Count_total = 0, Text_len = 1, Text_mode = TEXT_ALPHA_MODE, i, firstExec = 1;
 int y, x, curser = 0;
 void reset_para() {
 	int i = 0,j = 0;
@@ -68,6 +68,7 @@ void reset_para() {
 	Text_mode = TEXT_ALPHA_MODE;
 	y = x = 0;
 	curser = 0;
+    firstExec = 1;
 }
 
 void clock_plus_hour() {
@@ -136,7 +137,7 @@ void out_to_LED(char data_arr[8]) {
 	close(dev);
 }
 
-void out_to_LCD(char str[10], int len) {
+void out_to_LCD(char str[100], int len) {
 	int dev;
 
 	dev = open(FPGA_TEXT_LCD_DEVICE, O_WRONLY);
@@ -198,6 +199,18 @@ void out_to_Matrix(char matrix[10][8]) {
 	close(dev);
 }
 
+void Clock_FND_set_to_borad_time(){
+    time_t rawtime;
+    char buffer[50] ={0};
+    time(&rawtime);
+    sprintf (buffer, "%s", ctime(&rawtime) );
+    FND[0] = buffer[0];
+    FND[1] = buffer[1];
+    //skip 2 which is ':'
+    FND[3] = buffer[3];
+    FND[4] = buffer[4];
+}
+
 int main() {
 	int mode = 0;
 	struct input_event ev[BUFF_SIZE];
@@ -251,32 +264,25 @@ int main() {
 		read(dev, &push_sw_buff, buff_size);
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
+            if(firstExec){
+                Clock_FND_set_to_borad_time();
+                firstExec = 0;
+            }
 			if (push_sw_buff[0] == 1) {
-				//deplay
-				char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
-				out_to_LED(led1);
+				Text_mode = 0;
 			}
 			else if (push_sw_buff[1] == 1) {
-				out_to_FND(FND);
+                Clock_FND_set_to_borad_time();
 			}
 			else if (push_sw_buff[2] == 1) {
 				clock_plus_hour();
-				char led3[8] = { 0, 0 ,1, 0, 0, 0 ,0 ,0 };
-				char led4[8] = { 0, 0 ,0, 1, 0, 0 ,0 ,0 };
-				out_to_LED(led3);
-				usleep(1000 * 1000);
-				out_to_LED(led4);
-				usleep(1000 * 1000);
+                Text_mode = 1;
 			}
 			else if (push_sw_buff[3] == 1) {
 				clock_plus_minute();
-				char led3[8] = { 0, 0 ,1, 0, 0, 0 ,0 ,0 };
-				char led4[8] = { 0, 0 ,0, 1, 0, 0 ,0 ,0 };
-				out_to_LED(led3);
-				usleep(1000 * 1000);
-				out_to_LED(led4);
-				usleep(1000 * 1000);
+                Text_mode = 1;
 			}
+            out_to_FND(FND);
 		}
 		else if (mode == 1) {
 			if (push_sw_buff[0] == 1) {
@@ -574,15 +580,28 @@ int main() {
 					}
 				}
 			}
-			Count_total++;
-			Count_total %= 10000;
-			FND[0] = Count_total / 1000;
-			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
-			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
-			FND[3] = (Count_total)-(Count_total / 10) * 10;
-			out_to_FND(FND);
-			out_to_Matrix(Draw_Matrix);
+            Count_total++;
+            Count_total %= 10000;
+            FND[0] = Count_total / 1000;
+            FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
+            FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
+            FND[3] = (Count_total)-(Count_total / 10) * 10;
+            out_to_FND(FND);
+            out_to_Matrix(Draw_Matrix);
 		}
+        
+        char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
+        char led3[8] = { 0, 0 ,1, 0, 0, 0 ,0 ,0 };
+        char led4[8] = { 0, 0 ,0, 1, 0, 0 ,0 ,0 };
+        if(mode == 0 && Text_mode == 0){
+            out_to_LED(led1);
+        }
+        else if(mode == 0 && Text_mode == 1){
+            out_to_LED(led3);
+            usleep(1000 * 1000);
+            out_to_LED(led4);
+            usleep(1000 * 1000);
+        }
 	}
 
 	return 0;
