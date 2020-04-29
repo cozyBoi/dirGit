@@ -20,10 +20,10 @@
 #define TEXT_ALPHA_MODE 0
 #define TEXT_NUM_MODE 1
 #define FND_DEVICE "/dev/input/fpga_fnd"
-#define LED_DEVICE "/dev//input/fpga_led"
-#define FPGA_TEXT_LCD_DEVICE "/dev//input/fpga_text_lcd"
+#define LED_DEVICE "/dev/input/fpga_led"
+#define FPGA_TEXT_LCD_DEVICE "/dev/input/fpga_text_lcd"
 
-#define FPGA_DOT_DEVICE "/dev//input/fpga_dot"
+#define FPGA_DOT_DEVICE "/dev/input/fpga_dot"
 
 unsigned char fpga_number[11][10] = {
 	{ 0x3e,0x7f,0x63,0x73,0x73,0x6f,0x67,0x63,0x7f,0x3e }, // 0
@@ -247,7 +247,7 @@ int main() {
 
 		read(dev, &push_sw_buff, buff_size);
 		if (mode == 0) {
-			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
+			//boradÃ€Ã‡ Â½ÃƒÂ°Â£Ã€Â» Â°Â¡ÃÂ®Â¿ÃÂ¾ÃŸÃ‡Ã”
 			if (push_sw_buff[0] == 1) {
 				//deplay
 				char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
