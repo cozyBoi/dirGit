@@ -1,0 +1,582 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <linux/input.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <termios.h>
+#include <signal.h>
+#include <sys/ioctl.h>
+
+#define BUFF_SIZE 64
+#define KEY_RELEASE 0
+#define KEY_PRESS 1
+#define MAX_BUTTON 9
+#define TEXT_ALPHA_MODE 0
+#define TEXT_NUM_MODE 1
+#define FND_DEVICE "/dev/fpga_fnd"
+#define LED_DEVICE "/dev/fpga_led"
+#define FPGA_TEXT_LCD_DEVICE "/dev/fpga_text_lcd"
+
+#define FPGA_DOT_DEVICE "/dev/fpga_dot"
+
+unsigned char fpga_number[11][10] = {
+	{ 0x3e,0x7f,0x63,0x73,0x73,0x6f,0x67,0x63,0x7f,0x3e }, // 0
+{ 0x0c,0x1c,0x1c,0x0c,0x0c,0x0c,0x0c,0x0c,0x0c,0x1e }, // 1
+{ 0x7e,0x7f,0x03,0x03,0x3f,0x7e,0x60,0x60,0x7f,0x7f }, // 2
+{ 0xfe,0x7f,0x03,0x03,0x7f,0x7f,0x03,0x03,0x7f,0x7e }, // 3
+{ 0x66,0x66,0x66,0x66,0x66,0x66,0x7f,0x7f,0x06,0x06 }, // 4
+{ 0x7f,0x7f,0x60,0x60,0x7e,0x7f,0x03,0x03,0x7f,0x7e }, // 5
+{ 0x60,0x60,0x60,0x60,0x7e,0x7f,0x63,0x63,0x7f,0x3e }, // 6
+{ 0x7f,0x7f,0x63,0x63,0x03,0x03,0x03,0x03,0x03,0x03 }, // 7
+{ 0x3e,0x7f,0x63,0x63,0x7f,0x7f,0x63,0x63,0x7f,0x3e }, // 8
+{ 0x3e,0x7f,0x63,0x63,0x7f,0x3f,0x03,0x03,0x03,0x03 }, // 9
+{ 0x1c,0x36,0x63,0x63,0x63,0x7f,0x7f,0x63,0x63,0x63 } // A
+};
+
+unsigned char quit = 0;
+
+void user_signal1(int sig)
+{
+	quit = 1;
+}
+
+char FND[4], LED[8], TextLED[2][30], Draw_Matrix[10][8];
+int dot = 0, Count_jinsu = 10, Count_total = 0, Text_len = 1, Text_mode = TEXT_ALPHA_MODE, i;
+int y, x, curser = 0;
+void reset_para() {
+	int i = 0,j = 0;
+	for (i = 0; i < 4; i++) FND[i] = 0;
+	for (i = 0; i < 8; i++) LED[i] = 0;
+	for (i = 0; i < 10; i++) TextLED[0][i] = 0;
+	for (i = 0; i < 10; i++) TextLED[1][i] = 0;
+	for (i = 0; i < 10; i++) {
+		for (j = 0; j < 7; j++) {
+			Draw_Matrix[i][j] = 0;
+		}
+	}
+
+	Count_total = dot = 0;
+	Count_jinsu = 10;
+	Text_len = 1;
+	Text_mode = TEXT_ALPHA_MODE;
+	y = x = 0;
+	curser = 0;
+}
+
+void clock_plus_hour() {
+	FND[1]++;
+	if (FND[1] == 10) {
+		FND[1] = 0;
+		FND[0]++;
+	}
+	if (FND[0] == 2 && FND[1] == 4) {
+		FND[0] = FND[1] = 0;
+	}
+}
+
+void clock_plus_minute() {
+	FND[3]++;
+	if (FND[3] == 10) {
+		FND[3] = 0;
+		FND[2]++;
+	}
+	if (FND[2] == 6) {
+		FND[2] = 0;
+		clock_plus_hour();
+	}
+}
+
+void out_to_FND(char data[4]) {
+	int dev;
+	int i;
+	int str_size;
+
+	for (i = 0;i<4;i++)
+	{
+		if ((data[i]>=0x30) && (data[i]<=0x39)) {
+			data[i] -= 0x30;
+		}
+	}
+
+	dev = open(FND_DEVICE, O_RDWR);
+	if (dev<0) {
+		printf("Device open error : %s\n", FND_DEVICE);
+		exit(1);
+	}
+
+	write(dev, &data, 4);
+
+	close(dev);
+}
+
+void out_to_LED(char data_arr[8]) {
+	int dev;
+
+	dev = open(LED_DEVICE, O_RDWR);
+	if (dev<0) {
+		printf("Device open error : %s\n", LED_DEVICE);
+		exit(1);
+	}
+
+	int data = 0;
+
+	for (i = 0; i < 8; i++) {
+		data += (1 << (7 - i)) * data_arr[i];
+	}
+
+	write(dev, &data, 1);
+
+	close(dev);
+}
+
+void out_to_LCD(char str[10], int len) {
+	int dev;
+
+	dev = open(FPGA_TEXT_LCD_DEVICE, O_WRONLY);
+	if (dev<0) {
+		printf("Device open error : %s\n", FPGA_TEXT_LCD_DEVICE);
+		exit(1);
+	}
+	if (len <= 8) {
+		write(dev, str, 8);
+	}
+	else {
+		write(dev, &str[len-8], 8);
+	}
+
+	close(dev);
+}
+
+void out_to_Matrix_alpha(int mode) {
+	int dev;
+	int set_num;
+
+	dev = open(FPGA_DOT_DEVICE, O_WRONLY);
+	if (dev<0) {
+		printf("Device open error : %s\n", FPGA_DOT_DEVICE);
+		exit(1);
+	}
+	set_num = 1;
+	if (mode == TEXT_ALPHA_MODE) {
+		set_num = 11;
+	}
+	write(dev, fpga_number[set_num], 8);
+
+	close(dev);
+}
+
+int arr_to_int(char arr[8]) {
+	int ret = 0;
+	for (i = 0; i < 8; i++) {
+		ret += (1 << (7 - i)) * arr[i];
+	}
+	return ret;
+}
+
+void out_to_Matrix(char matrix[10][8]) {
+	int dev;
+	int set_num;
+
+	dev = open(FPGA_DOT_DEVICE, O_WRONLY);
+	if (dev < 0) {
+		printf("Device open error : %s\n", FPGA_DOT_DEVICE);
+		exit(1);
+	}
+	char fpga_data[10];
+	for (i = 0; i < 10; i++) {
+		fpga_data[i] = arr_to_int(matrix[i]);
+	}
+	write(dev, fpga_data, 8);
+
+	close(dev);
+}
+
+int main() {
+	int mode = 0;
+	struct input_event ev[BUFF_SIZE];
+	int fd, rd, value, size = sizeof(struct input_event);
+	char name[256] = "Unknown";
+	char* device = "/dev/input/event0";
+	if ((fd = open(device, O_RDONLY | O_NONBLOCK)) == -1) {
+		printf("%s is not a vaild device.n", device);
+	}
+	//event0 open
+
+	int i;
+	int dev;
+	int buff_size;
+
+	unsigned char push_sw_buff[MAX_BUTTON];
+
+	dev = open("/dev/fpga_push_switch", O_RDWR);
+	if (dev<0) {
+		printf("Device Open Error\n");
+		close(dev);
+		return -1;
+	}
+	(void)signal(SIGINT, user_signal1);
+	buff_size = sizeof(push_sw_buff);
+	//dev open
+	
+	while (1) {
+		rd = read(fd, ev, size * BUFF_SIZE);
+		//event0 read
+
+		if (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 115) {
+			//volume +, mode change
+			mode = (mode + 1) % 4;
+			reset_para();
+		printf("mode : %d\n", mode);
+		}
+		if (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 114) {
+			//volume -, mode change
+			mode = mode ? mode - 1 : 3;
+			reset_para();
+		printf("mode : %d\n", mode);
+		}
+
+		read(dev, &push_sw_buff, buff_size);
+		if (mode == 0) {
+			//borad의 시간을 가져와야함
+			if (push_sw_buff[0] == 1) {
+				//deplay
+				char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
+				out_to_LED(led1);
+			}
+			else if (push_sw_buff[1] == 1) {
+				out_to_FND(FND);
+			}
+			else if (push_sw_buff[2] == 1) {
+				clock_plus_hour();
+				char led3[8] = { 0, 0 ,1, 0, 0, 0 ,0 ,0 };
+				char led4[8] = { 0, 0 ,0, 1, 0, 0 ,0 ,0 };
+				out_to_LED(led3);
+				usleep(1000 * 1000);
+				out_to_LED(led4);
+				usleep(1000 * 1000);
+			}
+			else if (push_sw_buff[3] == 1) {
+				clock_plus_minute();
+				char led3[8] = { 0, 0 ,1, 0, 0, 0 ,0 ,0 };
+				char led4[8] = { 0, 0 ,0, 1, 0, 0 ,0 ,0 };
+				out_to_LED(led3);
+				usleep(1000 * 1000);
+				out_to_LED(led4);
+				usleep(1000 * 1000);
+			}
+		}
+		else if (mode == 1) {
+			if (push_sw_buff[0] == 1) {
+				Count_jinsu = Count_jinsu - 2 ? Count_jinsu - 2 : 10;
+			}
+			else if (push_sw_buff[1] == 1) {
+				Count_total += Count_jinsu * Count_jinsu;
+			}
+			else if (push_sw_buff[2] == 1) {
+				Count_total += Count_jinsu;
+			}
+			else if (push_sw_buff[3] == 1) {
+				Count_total += 1;
+			}
+			//display
+			Count_total %= 10000;
+			FND[0] = Count_total / 1000;
+			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
+			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
+			FND[3] = (Count_total) - (Count_total / 10) * 10;
+			out_to_FND(FND);
+		}
+		else if (mode == 2) {
+			int curr = Text_len - 1;
+			if (push_sw_buff[2] == 1 && push_sw_buff[3] == 1) {
+				for (i = 0; i < 10; i++) TextLED[0][i] = 0;
+				Text_len = 1;
+				Count_total++;
+			}
+			else if (push_sw_buff[5] == 1 && push_sw_buff[6] == 1) {
+				Text_mode = ~Text_mode;
+				Count_total++;
+			}
+			else if (push_sw_buff[8] == 1 && push_sw_buff[9] == 1) {
+				TextLED[0][Text_len] = ' ';
+				Text_len++;
+				Count_total++;
+			}
+			else if (push_sw_buff[0] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '1';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = '.';
+				}
+				else if (TextLED[0][curr] == '.') {
+					TextLED[0][curr] = 'Q';
+				}
+				else if (TextLED[0][curr] == 'Q') {
+					TextLED[0][curr] = 'Z';
+				}
+				else if (TextLED[0][curr] == 'Z') {
+					TextLED[0][curr] = '.';
+				}
+				else{
+					//curr is not 
+					TextLED[0][Text_len] = '.';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[1] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '2';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'A';
+				}
+				else if (TextLED[0][curr] == 'A') {
+					TextLED[0][curr] = 'B';
+				}
+				else if (TextLED[0][curr] == 'B') {
+					TextLED[0][curr] = 'C';
+				}
+				else if (TextLED[0][curr] == 'C') {
+					TextLED[0][curr] = 'A';
+				}
+				else {
+					//curr is not us
+					TextLED[0][Text_len] = 'A';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[2] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '3';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'D';
+				}
+				else if (TextLED[0][curr] == 'D') {
+					TextLED[0][curr] = 'E';
+				}
+				else if (TextLED[0][curr] == 'E') {
+					TextLED[0][curr] = 'F';
+				}
+				else if (TextLED[0][curr] == 'F') {
+					TextLED[0][curr] = 'D';
+				}
+				else {
+					//curr is not 
+					TextLED[0][Text_len] = 'D';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[3] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '4';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'G';
+				}
+				else if (TextLED[0][curr] == 'G') {
+					TextLED[0][curr] = 'H';
+				}
+				else if (TextLED[0][curr] == 'H') {
+					TextLED[0][curr] = 'I';
+				}
+				else if (TextLED[0][curr] == 'I') {
+					TextLED[0][curr] = 'G';
+				}
+				else {
+					//curr is not 
+					TextLED[0][Text_len] = 'G';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[4] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '5';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'J';
+				}
+				else if (TextLED[0][curr] == 'J') {
+					TextLED[0][curr] = 'K';
+				}
+				else if (TextLED[0][curr] == 'K') {
+					TextLED[0][curr] = 'L';
+				}
+				else if (TextLED[0][curr] == 'L') {
+					TextLED[0][curr] = 'J';
+				}
+				else {
+					//curr is not 
+					TextLED[0][Text_len] = 'J';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[5] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '6';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'M';
+				}
+				else if (TextLED[0][curr] == 'M') {
+					TextLED[0][curr] = 'N';
+				}
+				else if (TextLED[0][curr] == 'N') {
+					TextLED[0][curr] = 'O';
+				}
+				else if (TextLED[0][curr] == 'O') {
+					TextLED[0][curr] = 'M';
+				}
+				else {
+					//curr is not 
+					TextLED[0][Text_len] = 'M';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[6] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '7';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'P';
+				}
+				else if (TextLED[0][curr] == 'P') {
+					TextLED[0][curr] = 'R';
+				}
+				else if (TextLED[0][curr] == 'R') {
+					TextLED[0][curr] = 'S';
+				}
+				else if (TextLED[0][curr] == 'S') {
+					TextLED[0][curr] = 'P';
+				}
+				else {
+					//curr is not 
+					TextLED[0][Text_len] = 'P';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[7] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '8';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'T';
+				}
+				else if (TextLED[0][curr] == 'T') {
+					TextLED[0][curr] = 'U';
+				}
+				else if (TextLED[0][curr] == 'U') {
+					TextLED[0][curr] = 'V';
+				}
+				else if (TextLED[0][curr] == 'V') {
+					TextLED[0][curr] = 'T';
+				}
+				else {
+					//curr is not 
+					TextLED[0][Text_len] = 'T';
+					Text_len++;
+				}
+			}
+			else if (push_sw_buff[8] == 1) {
+				if (mode == TEXT_NUM_MODE) {
+					TextLED[0][Text_len] = '9';
+					Text_len++;
+				}
+				else if (TextLED[0][curr] == 0) {
+					TextLED[0][curr] = 'W';
+				}
+				else if (TextLED[0][curr] == 'W') {
+					TextLED[0][curr] = 'X';
+				}
+				else if (TextLED[0][curr] == 'X') {
+					TextLED[0][curr] = 'Y';
+				}
+				else if (TextLED[0][curr] == 'Y') {
+					TextLED[0][curr] = 'X';
+				}
+				else {
+					//curr is not 
+					TextLED[0][Text_len] = 'X';
+					Text_len++;
+				}
+			}
+			Count_total++;
+
+			Count_total %= 10000;
+			FND[0] = Count_total / 1000;
+			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
+			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
+			FND[3] = (Count_total)-(Count_total / 10) * 10;
+			out_to_FND(FND);
+
+			out_to_LCD(TextLED[0], Text_len);
+
+			out_to_Matrix_alpha(Text_mode);
+		}
+		else if (mode == 3) {
+			if (push_sw_buff[0] == 1) {
+				int i = 0, j = 0;
+				for (i = 0; i < 4; i++) FND[i] = 0;
+				for (i = 0; i < 10; i++) {
+					for (j = 0; j < 7; j++) {
+						Draw_Matrix[i][j] = 0;
+					}
+				}
+			}
+			else if (push_sw_buff[1] == 1) {
+				if (y > 0) y -= 1;
+			}
+			else if (push_sw_buff[2] == 1) {
+				curser = ~curser;
+			}
+			else if (push_sw_buff[3] == 1) {
+				if (x > 0) x -= 1;
+			}
+			else if (push_sw_buff[4] == 1) {
+				Draw_Matrix[y][x] = 1;
+			}
+			else if (push_sw_buff[5] == 1) {
+				if (x < 9) x += 1;
+			}
+			else if (push_sw_buff[6] == 1) {
+				Draw_Matrix[y][x] = 0;
+			}
+			else if (push_sw_buff[7] == 1) {
+				if (y < 9) y += 1;
+			}
+			else if (push_sw_buff[8] == 1) {
+				int i = 0, j = 0;
+				for (i = 0; i < 10; i++) {
+					for (j = 0; j < 7; j++) {
+						Draw_Matrix[i][j] = ~Draw_Matrix[i][j];
+					}
+				}
+			}
+			Count_total++;
+			Count_total %= 10000;
+			FND[0] = Count_total / 1000;
+			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
+			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
+			FND[3] = (Count_total)-(Count_total / 10) * 10;
+			out_to_FND(FND);
+			out_to_Matrix(Draw_Matrix);
+		}
+	}
+
+	return 0;
+}
