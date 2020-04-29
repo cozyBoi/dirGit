@@ -228,17 +228,21 @@ int main() {
 		rd = read(fd, ev, size * BUFF_SIZE);
 		//event0 read
 
-		if (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 115) {
+        while (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 115) {
 			//volume +, mode change
-			mode = (mode + 1) % 4;
-			reset_para();
-		printf("mode : %d\n", mode);
+            if (ev[0].type == 1 && ev[0].value == KEY_RELEASE && ev[0].code == 115) {
+                mode = (mode + 1) % 4;
+                reset_para();
+                printf("mode : %d\n", mode);
+            }
 		}
-		if (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 114) {
+		while (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 114) {
 			//volume -, mode change
-			mode = mode ? mode - 1 : 3;
-			reset_para();
-		printf("mode : %d\n", mode);
+            if (ev[0].type == 1 && ev[0].value == KEY_RELEASE && ev[0].code == 114) {
+                mode = mode ? mode - 1 : 3;
+                reset_para();
+                printf("mode : %d\n", mode);
+            }
 		}
 
 		read(dev, &push_sw_buff, buff_size);
