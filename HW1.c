@@ -275,15 +275,11 @@ int main() {
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
-                printf("buff size : %d\n", buff_size);
-                for(i = 0; i < buff_size; i++){
-                    printf("%d ", push_sw_buff[i]);
-                }
                 Clock_FND_set_to_borad_time();
                 firstExec = 0;
             }
 			if (push_sw_buff[0] == 1) {
-				Text_mode = 0;
+				Text_mode = ~Text_mode;
 //                push_sw_buff[0] = 0;
 			}
 			else if (push_sw_buff[1] == 1) {
@@ -293,13 +289,11 @@ int main() {
 			else if (push_sw_buff[2] == 1) {
                 clock_plus_hour();
                 printf("plus hour\n");
-                Text_mode = 1;
 //                push_sw_buff[2] = 0;
 			}
 			else if (push_sw_buff[3] == 1) {
 				clock_plus_minute();
                 printf("plus minute\n");
-                Text_mode = 1;
 //                push_sw_buff[3] = 0;
 			}
             out_to_FND(FND);
@@ -611,7 +605,7 @@ int main() {
             out_to_FND(FND);
             out_to_Matrix(Draw_Matrix);*/
 		}
-        /*
+        
         char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
         char led3[8] = { 0, 0 ,1, 0, 0, 0 ,0 ,0 };
         char led4[8] = { 0, 0 ,0, 1, 0, 0 ,0 ,0 };
@@ -624,7 +618,6 @@ int main() {
             out_to_LED(led4);
             usleep(1000 * 1000);
         }
-          */
 	}
 
 	return 0;
