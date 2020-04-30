@@ -301,7 +301,7 @@ int main() {
 		read(dev, &push_sw_buff, buff_size);
         //printf("after read\n");
         
-        usleep(5000);
+        usleep(10000);
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
@@ -704,20 +704,19 @@ int main() {
             
             if(led_mode == 1){
                 out_to_LED(led3);
-                if(j == 500){
+                if(j == 100){
                     j = 0;
                     led_mode = 0;
                 }
             }
             else{
                 out_to_LED(led4);
-                if(j == 500){
+                if(j == 100){
                     j = 0;
                     led_mode = 1;
                 }
             }
             
-            usleep(1000);
             j++;
         }
 	}
