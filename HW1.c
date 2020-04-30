@@ -281,7 +281,7 @@ int main() {
 		}
         //printf("before read\n");
 		read(dev, &push_sw_buff, buff_size);
-        usleep(200000);
+        usleep(100000);
         //printf("after read\n");
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
