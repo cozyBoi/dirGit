@@ -297,12 +297,12 @@ int main() {
                 Clock_FND_set_to_borad_time();
 //                push_sw_buff[1] = 0;
 			}
-			else if (push_sw_buff[2] == 1) {
+			else if (push_sw_buff[2] == 1 && Text_mode) {
                 clock_plus_hour();
                 printf("plus hour\n");
 //                push_sw_buff[2] = 0;
 			}
-			else if (push_sw_buff[3] == 1) {
+			else if (push_sw_buff[3] == 1 && Text_mode) {
 				clock_plus_minute();
                 printf("plus minute\n");
 //                push_sw_buff[3] = 0;
@@ -564,12 +564,12 @@ int main() {
 			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
 			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
 			FND[3] = (Count_total)-(Count_total / 10) * 10;
- /*
+ 
 			out_to_FND(FND);
 
 			out_to_LCD(TextLED[0], Text_len);
 
-			out_to_Matrix_alpha(Text_mode);*/
+//			out_to_Matrix_alpha(Text_mode);
 		}
 		else if (mode == 3) {
 			if (push_sw_buff[0] == 1) {
@@ -612,13 +612,12 @@ int main() {
 			}
             Count_total++;
             Count_total %= 10000;
-            /*
             FND[0] = Count_total / 1000;
             FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
             FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
             FND[3] = (Count_total)-(Count_total / 10) * 10;
             out_to_FND(FND);
-            out_to_Matrix(Draw_Matrix);*/
+            //out_to_Matrix(Draw_Matrix);
 		}
         
         char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
