@@ -215,8 +215,8 @@ void Clock_FND_set_to_borad_time(){
     FND[0] = buffer[i-2] - 0x30;
     FND[1] = buffer[i-1] - 0x30;
     //skip 2 which is ':'
-    FND[3] = buffer[i+1] - 0x30;
-    FND[4] = buffer[i+2] - 0x30;
+    FND[2] = buffer[i+1] - 0x30;
+    FND[3] = buffer[i+2] - 0x30;
 }
 
 int main() {
