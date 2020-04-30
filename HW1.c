@@ -240,7 +240,7 @@ int main() {
 		printf("%s is not a vaild device.n", device);
 	}
 	//event0 open
-
+    int j = 0, led_mode = 0;
 	int i;
 	int dev;
 	int buff_size;
@@ -635,10 +635,16 @@ int main() {
             out_to_LED(led1);
         }
         else if(mode == 0 && Text_mode != 0){
-            out_to_LED(led3);
-            usleep(1000 * 1000);
-            out_to_LED(led4);
-            usleep(1000 * 1000);
+            if(led_mode){
+                out_to_LED(led3);
+            }
+            else{
+                out_to_LED(led4);
+            }
+            usleep(1000); j++;
+            if(j == 1000){
+                j = 0; led_mode = ~led_mode;
+            }
         }
 	}
 
