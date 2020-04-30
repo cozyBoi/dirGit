@@ -219,6 +219,17 @@ void Clock_FND_set_to_borad_time(){
     FND[3] = buffer[i+2] - 0x30;
 }
 
+int pow(int n, int p){
+    int i = 0;
+    int ret = 1;
+    
+    for(i = 0; i < p; i++){
+        ret *= n;
+    }
+    
+    return ret;
+}
+
 int main() {
 	int mode = 0;
 	struct input_event ev[BUFF_SIZE];
@@ -301,6 +312,7 @@ int main() {
 		else if (mode == 1) {
 			if (push_sw_buff[0] == 1) {
 				Count_jinsu = Count_jinsu - 2 ? Count_jinsu - 2 : 10;
+                if(Count_jinsu == 6) Count_jinsu -= 2;
 			}
 			else if (push_sw_buff[1] == 1) {
 				Count_total += Count_jinsu * Count_jinsu;
@@ -312,12 +324,15 @@ int main() {
 				Count_total += 1;
 			}
 			//display
-			Count_total %= 10000;
-			FND[0] = Count_total / 1000;
-			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
-			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
-			FND[3] = (Count_total) - (Count_total / 10) * 10;
-			//out_to_FND(FND);
+			FND[0] = Count_total / pow(Count_jinsu, 3)
+            - (Count_total / pow(Count_jinsu, 4)) * pow(Count_jinsu, 1);
+			FND[1] = (Count_total / pow(Count_jinsu, 2))
+            - (Count_total / pow(Count_jinsu, 3)) * pow(Count_jinsu, 1);
+			FND[2] = (Count_total / pow(Count_jinsu, 1))
+            - (Count_total / pow(Count_jinsu, 2)) * pow(Count_jinsu, 1);
+			FND[3] = (Count_total)
+            - (Count_total / pow(Count_jinsu, 1)) * pow(Count_jinsu, 1);
+			out_to_FND(FND);
 		}
 		else if (mode == 2) {
 			int curr = Text_len - 1;
