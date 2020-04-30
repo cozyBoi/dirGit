@@ -189,25 +189,26 @@ void out_to_Matrix(char matrix[10][7]) {
 	int set_num;
     
 	dev = open(FPGA_DOT_DEVICE, O_WRONLY);
-    printf("where 6\n");
+//    printf("where 6\n");
 	if (dev < 0) {
 		printf("Device open error : %s\n", FPGA_DOT_DEVICE);
 		exit(1);
 	}
     
 	unsigned char fpga_data[10];
-    printf("where 7\n");
+//    printf("where 7\n");
     int i, j;
+    /*
     for(i = 0; i < 10; i++){
         for(j = 0; j < 7; j++){
             printf("%d ");
         }
         printf("\n");
-    }
+    }*/
     
 	for (i = 0; i < 10; i++) {
 		fpga_data[i] = arr_to_int(matrix[i]);
-        printf("%d ", fpga_data[i]);
+        //printf("%d ", fpga_data[i]);
 	}
     printf("\n");
     //
@@ -597,7 +598,7 @@ int main() {
 		}
 		else if (mode == 3) {
             //여기서 팅김
-            printf("where1\n");
+//            printf("where1\n");
 			if (push_sw_buff[0] == 1) {
 				int i = 0, j = 0;
 				for (i = 0; i < 4; i++) FND[i] = 0;
@@ -606,28 +607,42 @@ int main() {
 						Draw_Matrix[i][j] = 0;
 					}
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[1] == 1) {
 				if (y > 0) y -= 1;
+                Count_total++;
 			}
 			else if (push_sw_buff[2] == 1) {
                 if(curser == 0) curser = 1;
                 else curser = 0;
+                Count_total++;
 			}
 			else if (push_sw_buff[3] == 1) {
 				if (x > 0) x -= 1;
+                Count_total++;
 			}
 			else if (push_sw_buff[4] == 1) {
-				Draw_Matrix[y][x] = 1;
+                if(Draw_Matrix[y][x] == 1){
+                   Draw_Matrix[y][x] = 0;
+                }
+                else{
+                   Draw_Matrix[y][x] = 1;
+                }
+                   
+                Count_total++;
 			}
 			else if (push_sw_buff[5] == 1) {
 				if (x < 7) x += 1;
+                Count_total++;
 			}
 			else if (push_sw_buff[6] == 1) {
 				Draw_Matrix[y][x] = 0;
+                Count_total++;
 			}
 			else if (push_sw_buff[7] == 1) {
 				if (y < 7) y += 1;
+                Count_total++;
 			}
 			else if (push_sw_buff[8] == 1) {
 				int i = 0, j = 0;
@@ -641,6 +656,7 @@ int main() {
                         }
 					}
 				}
+                Count_total++;
 			}
             if(curser == 1){
                 if(k == 1000){
@@ -655,18 +671,17 @@ int main() {
                 }
                 k++;
             }
-            printf("where2\n");
-            Count_total++;
+//            printf("where2\n");
             Count_total %= 10000;
             FND[0] = Count_total / 1000;
             FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
             FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
             FND[3] = (Count_total)-(Count_total / 10) * 10;
-            printf("where3\n");
+//            printf("where3\n");
             out_to_FND(FND);
-            printf("where4\n");
+//            printf("where4\n");
             out_to_Matrix(Draw_Matrix);
-            printf("where5\n");
+//            printf("where5\n");
 		}
         
         char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
