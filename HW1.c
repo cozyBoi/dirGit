@@ -250,7 +250,7 @@ int main() {
                 reset_para();
                 printf("mode : %d\n", mode);
             }
-		}/*
+		}
 		while (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 114) {
 			//volume -, mode change
             rd = read(fd, ev, size * BUFF_SIZE);
@@ -535,11 +535,12 @@ int main() {
 			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
 			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
 			FND[3] = (Count_total)-(Count_total / 10) * 10;
+ /*
 			out_to_FND(FND);
 
 			out_to_LCD(TextLED[0], Text_len);
 
-			out_to_Matrix_alpha(Text_mode);
+			out_to_Matrix_alpha(Text_mode);*/
 		}
 		else if (mode == 3) {
 			if (push_sw_buff[0] == 1) {
@@ -589,7 +590,7 @@ int main() {
             out_to_FND(FND);
             out_to_Matrix(Draw_Matrix);
 		}
-        
+        /*
         char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
         char led3[8] = { 0, 0 ,1, 0, 0, 0 ,0 ,0 };
         char led4[8] = { 0, 0 ,0, 1, 0, 0 ,0 ,0 };
