@@ -193,7 +193,8 @@ void out_to_Matrix(char matrix[10][7]) {
 		printf("Device open error : %s\n", FPGA_DOT_DEVICE);
 		exit(1);
 	}
-	char fpga_data[10];
+    
+	unsigned char fpga_data[10];
 	for (i = 0; i < 10; i++) {
 		fpga_data[i] = arr_to_int(matrix[i]);
 	}
