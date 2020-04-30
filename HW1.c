@@ -278,10 +278,12 @@ int main() {
                 Clock_FND_set_to_borad_time();
 			}
 			else if (push_sw_buff[2] == 1) {
-				clock_plus_hour();
+                while(push_sw_buff[2] == 1);
+                clock_plus_hour();
                 Text_mode = 1;
 			}
 			else if (push_sw_buff[3] == 1) {
+                while(push_sw_buff[3] == 1);
 				clock_plus_minute();
                 Text_mode = 1;
 			}
