@@ -244,7 +244,6 @@ int main() {
 	int i;
 	int dev;
 	int buff_size;
-
 	unsigned char push_sw_buff[MAX_BUTTON];
 
 	dev = open("/dev/fpga_push_switch", O_RDWR);
@@ -343,6 +342,7 @@ int main() {
 			}
 			else if (push_sw_buff[4] == 1 && push_sw_buff[5] == 1) {
 				Text_mode = ~Text_mode;
+                printf("Text_mode : %d\n", Text_mode);
                 Count_total+=2;
 			}
 			else if (push_sw_buff[7] == 1 && push_sw_buff[8] == 1) {
@@ -351,7 +351,7 @@ int main() {
                 Count_total+=2;
 			}
 			else if (push_sw_buff[0] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '1';
 					Text_len++;
 				}
@@ -375,7 +375,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[1] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '2';
 					Text_len++;
 				}
@@ -399,7 +399,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[2] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '3';
 					Text_len++;
 				}
@@ -423,7 +423,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[3] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '4';
 					Text_len++;
 				}
@@ -447,7 +447,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[4] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '5';
 					Text_len++;
 				}
@@ -471,7 +471,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[5] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '6';
 					Text_len++;
 				}
@@ -495,7 +495,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[6] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '7';
 					Text_len++;
 				}
@@ -519,7 +519,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[7] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '8';
 					Text_len++;
 				}
@@ -543,7 +543,7 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[8] == 1) {
-				if (mode == TEXT_NUM_MODE) {
+				if (Text_mode == TEXT_NUM_MODE) {
 					TextLED[0][Text_len] = '9';
 					Text_len++;
 				}
