@@ -263,13 +263,14 @@ int main() {
                 printf("mode : %d\n", mode);
             }
 		}
-
+        printf("before read\n");
 		read(dev, &push_sw_buff, buff_size);
+        printf("after read\n");
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
                 printf("buff size : %d\n", buff_size);
-                for(int i = 0; i < buff_size; i++){
+                for(i = 0; i < buff_size; i++){
                     printf("%d ", push_sw_buff[i]);
                 }
                 Clock_FND_set_to_borad_time();
