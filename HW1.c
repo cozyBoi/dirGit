@@ -336,19 +336,19 @@ int main() {
 		}
 		else if (mode == 2) {
 			int curr = Text_len - 1;
-			if (push_sw_buff[2] == 1 && push_sw_buff[3] == 1) {
+			if (push_sw_buff[1] == 1 && push_sw_buff[2] == 1) {
 				for (i = 0; i < 10; i++) TextLED[0][i] = 0;
 				Text_len = 1;
 				Count_total++;
 			}
-			else if (push_sw_buff[5] == 1 && push_sw_buff[6] == 1) {
+			else if (push_sw_buff[4] == 1 && push_sw_buff[5] == 1) {
 				Text_mode = ~Text_mode;
-				Count_total++;
+                Count_total+=2;
 			}
-			else if (push_sw_buff[8] == 1 && push_sw_buff[9] == 1) {
+			else if (push_sw_buff[7] == 1 && push_sw_buff[8] == 1) {
 				TextLED[0][Text_len] = ' ';
 				Text_len++;
-				Count_total++;
+                Count_total+=2;
 			}
 			else if (push_sw_buff[0] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -372,6 +372,7 @@ int main() {
 					TextLED[0][Text_len] = '.';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[1] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -395,6 +396,7 @@ int main() {
 					TextLED[0][Text_len] = 'A';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[2] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -418,6 +420,7 @@ int main() {
 					TextLED[0][Text_len] = 'D';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[3] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -441,6 +444,7 @@ int main() {
 					TextLED[0][Text_len] = 'G';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[4] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -464,6 +468,7 @@ int main() {
 					TextLED[0][Text_len] = 'J';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[5] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -487,6 +492,7 @@ int main() {
 					TextLED[0][Text_len] = 'M';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[6] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -510,6 +516,7 @@ int main() {
 					TextLED[0][Text_len] = 'P';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[7] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -533,6 +540,7 @@ int main() {
 					TextLED[0][Text_len] = 'T';
 					Text_len++;
 				}
+                Count_total++;
 			}
 			else if (push_sw_buff[8] == 1) {
 				if (mode == TEXT_NUM_MODE) {
@@ -556,8 +564,8 @@ int main() {
 					TextLED[0][Text_len] = 'X';
 					Text_len++;
 				}
+                Count_total++;
 			}
-			Count_total++;
 
 			Count_total %= 10000;
 			FND[0] = Count_total / 1000;
