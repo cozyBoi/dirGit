@@ -301,7 +301,7 @@ int main() {
 		read(dev, &push_sw_buff, buff_size);
         //printf("after read\n");
         
-        usleep(10000);
+        usleep(100000);
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
@@ -683,13 +683,13 @@ int main() {
                     tmp_Draw_Matrix[i][j] = 0;
                 }
                 k++;
-                if(k <= 100){
+                if(k <= 10){
                     out_to_Matrix(Draw_Matrix);
                     
                 }
                 else{
                     out_to_Matrix(tmp_Draw_Matrix);
-                    if(k == 200) k = 0;
+                    if(k == 20) k = 0;
                 }
             }
             else{
@@ -717,14 +717,14 @@ int main() {
             
             if(led_mode == 1){
                 out_to_LED(led3);
-                if(j == 100){
+                if(j == 10){
                     j = 0;
                     led_mode = 0;
                 }
             }
             else{
                 out_to_LED(led4);
-                if(j == 100){
+                if(j == 10){
                     j = 0;
                     led_mode = 1;
                 }
