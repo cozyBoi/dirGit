@@ -677,21 +677,16 @@ int main() {
                         tmp_Draw_Matrix[ii][jj] = Draw_Matrix[ii][jj];
                     }
                 }
-                if(Draw_Matrix[y][x]){
+                
+                if(k <= 10){
                     tmp_Draw_Matrix[y][x] = 1;
                 }
                 else{
                     tmp_Draw_Matrix[y][x] = 0;
+                    if(k > 20) k = 0;
                 }
+                out_to_Matrix(tmp_Draw_Matrix);
                 k++;
-                if(k <= 10){
-                    out_to_Matrix(Draw_Matrix);
-                    
-                }
-                else{
-                    out_to_Matrix(tmp_Draw_Matrix);
-                    if(k == 20) k = 0;
-                }
             }
             else{
                 out_to_Matrix(Draw_Matrix);
