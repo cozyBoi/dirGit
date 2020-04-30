@@ -187,17 +187,21 @@ int arr_to_int(char arr[7]) {
 void out_to_Matrix(char matrix[10][7]) {
 	int dev;
 	int set_num;
-
+    
 	dev = open(FPGA_DOT_DEVICE, O_WRONLY);
+    printf("where 6\n");
 	if (dev < 0) {
 		printf("Device open error : %s\n", FPGA_DOT_DEVICE);
 		exit(1);
 	}
     
 	unsigned char fpga_data[10];
+    printf("where 7\n");
 	for (i = 0; i < 10; i++) {
 		fpga_data[i] = arr_to_int(matrix[i]);
+        printf("%d ", fpga_data);
 	}
+    printf("\n");
     //
 	write(dev, fpga_data, 10);
 
