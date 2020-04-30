@@ -207,6 +207,7 @@ void Clock_FND_set_to_borad_time(){
     char buffer[50] ={0};
     time(&rawtime);
     sprintf (buffer, "%s", ctime(&rawtime) );
+    printf("curr time : %s\n", buffer);
     FND[0] = buffer[0];
     FND[1] = buffer[1];
     //skip 2 which is ':'
@@ -265,7 +266,7 @@ int main() {
 		}
         //printf("before read\n");
 		read(dev, &push_sw_buff, buff_size);
-        usleep(400000);
+        usleep(40000);
         //printf("after read\n");
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
