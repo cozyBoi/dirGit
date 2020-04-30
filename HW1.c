@@ -670,7 +670,7 @@ int main() {
 			}
             char tmp_Draw_Matrix[10][7];
             if(curser == 1){
-                int ii = 0; jj = 0;
+                int ii = 0, jj = 0;
                 for(ii = 0 ; ii < 10; ii++){
                     for(jj = 0; jj < 7; jj++){
                         tmp_Draw_Matrix[ii][jj] = Draw_Matrix[ii][jj];
