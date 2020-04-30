@@ -282,7 +282,7 @@ int main() {
 				clock_plus_minute();
                 Text_mode = 1;
 			}
-            out_to_FND(FND);
+            //out_to_FND(FND);
 		}
 		else if (mode == 1) {
 			if (push_sw_buff[0] == 1) {
@@ -303,7 +303,7 @@ int main() {
 			FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
 			FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
 			FND[3] = (Count_total) - (Count_total / 10) * 10;
-			out_to_FND(FND);
+			//out_to_FND(FND);
 		}
 		else if (mode == 2) {
 			int curr = Text_len - 1;
@@ -583,12 +583,13 @@ int main() {
 			}
             Count_total++;
             Count_total %= 10000;
+            /*
             FND[0] = Count_total / 1000;
             FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
             FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
             FND[3] = (Count_total)-(Count_total / 10) * 10;
             out_to_FND(FND);
-            out_to_Matrix(Draw_Matrix);
+            out_to_Matrix(Draw_Matrix);*/
 		}
         /*
         char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
