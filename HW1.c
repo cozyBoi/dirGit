@@ -334,6 +334,7 @@ int main() {
 			out_to_FND(FND);
 		}
 		else if (mode == 2) {
+            
 			int curr = Text_len - 1;
 			if (push_sw_buff[1] == 1 && push_sw_buff[2] == 1) {
 				for (i = 0; i < 10; i++) TextLED[0][i] = 0;
@@ -581,6 +582,8 @@ int main() {
 			out_to_Matrix_alpha(Text_mode);
 		}
 		else if (mode == 3) {
+            //여기서 팅김
+            printf("where1\n");
 			if (push_sw_buff[0] == 1) {
 				int i = 0, j = 0;
 				for (i = 0; i < 4; i++) FND[i] = 0;
@@ -638,13 +641,16 @@ int main() {
                 }
                 k++;
             }
+            printf("where2\n");
             Count_total++;
             Count_total %= 10000;
             FND[0] = Count_total / 1000;
             FND[1] = (Count_total / 100) - (Count_total / 1000) * 10;
             FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
             FND[3] = (Count_total)-(Count_total / 10) * 10;
+            printf("where3\n");
             out_to_FND(FND);
+            printf("where4\n");
             out_to_Matrix(Draw_Matrix);
 		}
         
