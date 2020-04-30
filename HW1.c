@@ -301,7 +301,7 @@ int main() {
 		read(dev, &push_sw_buff, buff_size);
         //printf("after read\n");
         
-        usleep(1000);
+        usleep(5000);
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
