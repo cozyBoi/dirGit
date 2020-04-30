@@ -652,6 +652,7 @@ int main() {
             out_to_FND(FND);
             printf("where4\n");
             out_to_Matrix(Draw_Matrix);
+            printf("where5\n");
 		}
         
         char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
