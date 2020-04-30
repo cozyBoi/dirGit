@@ -612,6 +612,7 @@ int main() {
 						Draw_Matrix[i][j] = 0;
 					}
 				}
+                x = y = 0;
                 Count_total++;
 			}
 			else if (push_sw_buff[1] == 1) {
@@ -645,7 +646,7 @@ int main() {
                 int i, j;
                 for(i = 0; i < 10; i++){
                     for(j = 0; j < 7; j++){
-                        Draw_Matrix[y][x] = 0;
+                        Draw_Matrix[i][j] = 0;
                     }
                 }
                 Count_total++;
@@ -676,11 +677,11 @@ int main() {
                         tmp_Draw_Matrix[ii][jj] = Draw_Matrix[ii][jj];
                     }
                 }
-                if(Draw_Matrix[i][j]){
-                    tmp_Draw_Matrix[i][j] = 1;
+                if(Draw_Matrix[y][x]){
+                    tmp_Draw_Matrix[y][x] = 1;
                 }
                 else{
-                    tmp_Draw_Matrix[i][j] = 0;
+                    tmp_Draw_Matrix[y][x] = 0;
                 }
                 k++;
                 if(k <= 10){
