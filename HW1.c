@@ -219,7 +219,7 @@ void Clock_FND_set_to_borad_time(){
     FND[3] = buffer[i+2] - 0x30;
 }
 
-int pow(int n, int p){
+int POW(int n, int p){
     int i = 0;
     int ret = 1;
     
@@ -324,14 +324,14 @@ int main() {
 				Count_total += 1;
 			}
 			//display
-			FND[0] = Count_total / pow(Count_jinsu, 3)
-            - (Count_total / pow(Count_jinsu, 4)) * pow(Count_jinsu, 1);
-			FND[1] = (Count_total / pow(Count_jinsu, 2))
-            - (Count_total / pow(Count_jinsu, 3)) * pow(Count_jinsu, 1);
-			FND[2] = (Count_total / pow(Count_jinsu, 1))
-            - (Count_total / pow(Count_jinsu, 2)) * pow(Count_jinsu, 1);
+			FND[0] = Count_total / POW(Count_jinsu, 3)
+            - (Count_total / POW(Count_jinsu, 4)) * POW(Count_jinsu, 1);
+			FND[1] = (Count_total / POW(Count_jinsu, 2))
+            - (Count_total / POW(Count_jinsu, 3)) * POW(Count_jinsu, 1);
+			FND[2] = (Count_total / POW(Count_jinsu, 1))
+            - (Count_total / POW(Count_jinsu, 2)) * POW(Count_jinsu, 1);
 			FND[3] = (Count_total)
-            - (Count_total / pow(Count_jinsu, 1)) * pow(Count_jinsu, 1);
+            - (Count_total / POW(Count_jinsu, 1)) * POW(Count_jinsu, 1);
 			out_to_FND(FND);
 		}
 		else if (mode == 2) {
@@ -626,7 +626,7 @@ int main() {
         if(mode == 0 && Text_mode == 0){
             out_to_LED(led1);
         }
-        else if(mode == 0 && Text_mode == 1){
+        else if(mode == 0 && Text_mode != 0){
             out_to_LED(led3);
             usleep(1000 * 1000);
             out_to_LED(led4);
