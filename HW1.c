@@ -668,18 +668,32 @@ int main() {
 				}
                 Count_total++;
 			}
+            char tmp_Draw_Matrix[10][7];
             if(curser == 1){
-                if(k == 1000){
-                    k = 0;
+                int ii = 0; jj = 0;
+                for(ii = 0 ; ii < 10; ii++){
+                    for(jj = 0; jj < 7; jj++){
+                        tmp_Draw_Matrix[ii][jj] = Draw_Matrix[ii][jj];
+                    }
                 }
-                usleep(1000);
-                if(Draw_Matrix[i][j] == 0){
-                   Draw_Matrix[i][j] = 1;
+                if(Draw_Matrix[i][j]){
+                    tmp_Draw_Matrix[i][j] = 1;
                 }
-                else {
-                   Draw_Matrix[i][j] = 0;
+                else{
+                    tmp_Draw_Matrix[i][j] = 0;
                 }
                 k++;
+                if(k <= 100){
+                    out_to_Matrix(Draw_Matrix);
+                    
+                }
+                else{
+                    out_to_Matrix(tmp_Draw_Matrix);
+                    if(k == 200) k = 0;
+                }
+            }
+            else{
+                out_to_Matrix(Draw_Matrix);
             }
 //            printf("where2\n");
             Count_total %= 10000;
@@ -690,7 +704,6 @@ int main() {
 //            printf("where3\n");
             out_to_FND(FND);
 //            printf("where4\n");
-            out_to_Matrix(Draw_Matrix);
 //            printf("where5\n");
 		}
         
