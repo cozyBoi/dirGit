@@ -98,12 +98,15 @@ void out_to_FND(char data[4]) {
 	int dev;
 	int i;
 	int str_size;
-
+    unsigned char D[4];
 	for (i = 0;i<4;i++)
 	{
 		if ((data[i]>=0x30) && (data[i]<=0x39)) {
-			data[i] -= 0x30;
+			D[i] = data[i] - 0x30;
 		}
+        else{
+            D[i] = data[i];
+        }
 	}
 
 	dev = open(FND_DEVICE, O_RDWR);
@@ -112,7 +115,7 @@ void out_to_FND(char data[4]) {
 		exit(1);
 	}
 
-	write(dev, &data, 4);
+	write(dev, &D, 4);
 
 	close(dev);
 }
@@ -282,7 +285,7 @@ int main() {
 				clock_plus_minute();
                 Text_mode = 1;
 			}
-            //out_to_FND(FND);
+            out_to_FND(FND);
 		}
 		else if (mode == 1) {
 			if (push_sw_buff[0] == 1) {
