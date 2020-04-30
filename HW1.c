@@ -176,10 +176,10 @@ void out_to_Matrix_alpha(int mode) {
 	close(dev);
 }
 
-int arr_to_int(char arr[7]) {
-	int ret = 0;
+unsigned char arr_to_int(char arr[7]) {
+	unsigned char ret = 0;
 	for (i = 0; i < 7; i++) {
-		ret += (1 << (6 - i)) * arr[i];
+		if(arr[i] == 1) ret += (1 << (6 - i));
 	}
 	return ret;
 }
@@ -197,6 +197,14 @@ void out_to_Matrix(char matrix[10][7]) {
     
 	unsigned char fpga_data[10];
     printf("where 7\n");
+    int i, j;
+    for(i = 0; i < 10; i++){
+        for(j = 0; j < 7; j++){
+            printf("%d ");
+        }
+        printf("\n");
+    }
+    
 	for (i = 0; i < 10; i++) {
 		fpga_data[i] = arr_to_int(matrix[i]);
         printf("%d ", fpga_data);
