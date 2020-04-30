@@ -176,10 +176,10 @@ void out_to_Matrix_alpha(int mode) {
 	close(dev);
 }
 
-int arr_to_int(char arr[8]) {
+int arr_to_int(char arr[7]) {
 	int ret = 0;
-	for (i = 0; i < 8; i++) {
-		ret += (1 << (7 - i)) * arr[i];
+	for (i = 0; i < 7; i++) {
+		ret += (1 << (6 - i)) * arr[i];
 	}
 	return ret;
 }
@@ -594,7 +594,8 @@ int main() {
 				if (y > 0) y -= 1;
 			}
 			else if (push_sw_buff[2] == 1) {
-				curser = ~curser;
+                if(curser == 0) curser = 1;
+                else curser = 0;
 			}
 			else if (push_sw_buff[3] == 1) {
 				if (x > 0) x -= 1;
@@ -603,13 +604,13 @@ int main() {
 				Draw_Matrix[y][x] = 1;
 			}
 			else if (push_sw_buff[5] == 1) {
-				if (x < 9) x += 1;
+				if (x < 7) x += 1;
 			}
 			else if (push_sw_buff[6] == 1) {
 				Draw_Matrix[y][x] = 0;
 			}
 			else if (push_sw_buff[7] == 1) {
-				if (y < 9) y += 1;
+				if (y < 7) y += 1;
 			}
 			else if (push_sw_buff[8] == 1) {
 				int i = 0, j = 0;
