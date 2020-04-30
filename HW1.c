@@ -280,11 +280,13 @@ int main() {
 			else if (push_sw_buff[2] == 1) {
                 while(push_sw_buff[2] == 1);
                 clock_plus_hour();
+                printf("plus hour\n");
                 Text_mode = 1;
 			}
 			else if (push_sw_buff[3] == 1) {
                 while(push_sw_buff[3] == 1);
 				clock_plus_minute();
+                printf("plus minute\n");
                 Text_mode = 1;
 			}
             out_to_FND(FND);
