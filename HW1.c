@@ -47,15 +47,15 @@ void user_signal1(int sig)
 	quit = 1;
 }
 
-char FND[4], LED[8], TextLED[2][100], Draw_Matrix[10][8];
+char FND[4], LED[8], TextLED[2][100], Draw_Matrix[10][7];
 int dot = 0, Count_jinsu = 10, Count_total = 0, Text_len = 1, Text_mode = TEXT_ALPHA_MODE, i, firstExec = 1;
 int y, x, curser = 0;
 void reset_para() {
 	int i = 0,j = 0;
 	for (i = 0; i < 4; i++) FND[i] = 0;
 	for (i = 0; i < 8; i++) LED[i] = 0;
-	for (i = 0; i < 10; i++) TextLED[0][i] = 0;
-	for (i = 0; i < 10; i++) TextLED[1][i] = 0;
+	for (i = 0; i < 100; i++) TextLED[0][i] = 0;
+	for (i = 0; i < 100; i++) TextLED[1][i] = 0;
 	for (i = 0; i < 10; i++) {
 		for (j = 0; j < 7; j++) {
 			Draw_Matrix[i][j] = 0;
@@ -181,7 +181,7 @@ int arr_to_int(char arr[8]) {
 	return ret;
 }
 
-void out_to_Matrix(char matrix[10][8]) {
+void out_to_Matrix(char matrix[10][7]) {
 	int dev;
 	int set_num;
 
@@ -194,7 +194,7 @@ void out_to_Matrix(char matrix[10][8]) {
 	for (i = 0; i < 10; i++) {
 		fpga_data[i] = arr_to_int(matrix[i]);
 	}
-	write(dev, fpga_data, 8);
+	write(dev, fpga_data, 7);
 
 	close(dev);
 }
@@ -250,7 +250,7 @@ int main() {
                 reset_para();
                 printf("mode : %d\n", mode);
             }
-		}
+		}/*
 		while (ev[0].type == 1 && ev[0].value == KEY_PRESS && ev[0].code == 114) {
 			//volume -, mode change
             rd = read(fd, ev, size * BUFF_SIZE);
@@ -602,6 +602,7 @@ int main() {
             out_to_LED(led4);
             usleep(1000 * 1000);
         }
+          */
 	}
 
 	return 0;
