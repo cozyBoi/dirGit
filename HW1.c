@@ -282,6 +282,7 @@ int main() {
         //printf("before read\n");
 		read(dev, &push_sw_buff, buff_size);
         //printf("after read\n");
+        usleep(1000*1000);
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
@@ -289,26 +290,22 @@ int main() {
                 firstExec = 0;
             }
 			if (push_sw_buff[0] == 1) {
-                while(push_sw_buff[0] == 1);
 				Text_mode = ~Text_mode;
-//                push_sw_buff[0] = 0;
+                push_sw_buff[0] = 0;
 			}
 			else if (push_sw_buff[1] == 1) {
-                while(push_sw_buff[1] == 1);
                 Clock_FND_set_to_borad_time();
-//                push_sw_buff[1] = 0;
+                push_sw_buff[1] = 0;
 			}
 			else if (push_sw_buff[2] == 1 && Text_mode) {
-                while(push_sw_buff[2] == 1);
                 clock_plus_hour();
                 printf("plus hour\n");
-//                push_sw_buff[2] = 0;
+                push_sw_buff[2] = 0;
 			}
 			else if (push_sw_buff[3] == 1 && Text_mode) {
-                while(push_sw_buff[2] == 1);
 				clock_plus_minute();
                 printf("plus minute\n");
-//                push_sw_buff[3] = 0;
+                push_sw_buff[3] = 0;
 			}
             out_to_FND(FND);
 		}
