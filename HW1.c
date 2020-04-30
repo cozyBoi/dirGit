@@ -639,14 +639,14 @@ int main() {
                 out_to_LED(led3);
                 if(j == 1000){
                     j = 0;
-                    led_mode = 1;
+                    led_mode = 0;
                 }
             }
             else{
                 out_to_LED(led4);
                 if(j == 1000){
                     j = 0;
-                    led_mode = 0;
+                    led_mode = 1;
                 }
             }
             usleep(1000);
