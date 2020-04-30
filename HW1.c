@@ -282,7 +282,7 @@ int main() {
         //printf("before read\n");
 		read(dev, &push_sw_buff, buff_size);
         //printf("after read\n");
-        usleep(1000*1000);
+        usleep(150*1000);
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
