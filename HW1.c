@@ -341,7 +341,8 @@ int main() {
 				Count_total++;
 			}
 			else if (push_sw_buff[4] == 1 && push_sw_buff[5] == 1) {
-				Text_mode = ~Text_mode;
+                if(Text_mode == 0) Text_mode = 1;
+                else Text_mode = 0;
                 printf("Text_mode : %d\n", Text_mode);
                 Count_total+=2;
 			}
