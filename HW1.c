@@ -169,9 +169,9 @@ void out_to_Matrix_alpha(int mode) {
 	}
 	set_num = 1;
 	if (mode == TEXT_ALPHA_MODE) {
-		set_num = 11;
+		set_num = 10;
 	}
-	write(dev, fpga_number[set_num], 8);
+	write(dev, fpga_number[set_num], 10);
 
 	close(dev);
 }
@@ -197,7 +197,7 @@ void out_to_Matrix(char matrix[10][7]) {
 	for (i = 0; i < 10; i++) {
 		fpga_data[i] = arr_to_int(matrix[i]);
 	}
-	write(dev, fpga_data, 7);
+	write(dev, fpga_data, 10);
 
 	close(dev);
 }
@@ -578,7 +578,7 @@ int main() {
 
 			out_to_LCD(TextLED[0], Text_len);
 
-//			out_to_Matrix_alpha(Text_mode);
+			out_to_Matrix_alpha(Text_mode);
 		}
 		else if (mode == 3) {
 			if (push_sw_buff[0] == 1) {
@@ -626,7 +626,7 @@ int main() {
             FND[2] = (Count_total / 10) - (Count_total / 100) * 10;
             FND[3] = (Count_total)-(Count_total / 10) * 10;
             out_to_FND(FND);
-            //out_to_Matrix(Draw_Matrix);
+            out_to_Matrix(Draw_Matrix);
 		}
         
         char led1[8] = { 1, 0 ,0, 0, 0, 0 ,0 ,0 };
