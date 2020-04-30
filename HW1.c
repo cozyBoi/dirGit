@@ -637,14 +637,21 @@ int main() {
         else if(mode == 0 && Text_mode != 0){
             if(led_mode != 0){
                 out_to_LED(led3);
+                if(j == 1000){
+                    j = 0;
+                    led_mode = 1;
+                }
             }
             else{
                 out_to_LED(led4);
+                if(j == 1000){
+                    j = 0;
+                    led_mode = 0;
+                }
             }
-            usleep(1000); j++;
-            if(j == 1000){
-                j = 0; led_mode = ~led_mode;
-            }
+            usleep(1000);
+            j++;
+            
         }
 	}
 
