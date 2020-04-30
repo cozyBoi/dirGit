@@ -241,7 +241,7 @@ int main() {
 	}
 	//event0 open
     int j = 0, led_mode = 0;
-	int i;
+	int i, k;
 	int dev;
 	int buff_size;
 	unsigned char push_sw_buff[MAX_BUTTON];
@@ -616,10 +616,28 @@ int main() {
 				int i = 0, j = 0;
 				for (i = 0; i < 10; i++) {
 					for (j = 0; j < 7; j++) {
-						Draw_Matrix[i][j] = ~Draw_Matrix[i][j];
+                        if(Draw_Matrix[i][j] == 0){
+                           Draw_Matrix[i][j] = 1;
+                        }
+                        else {
+                           Draw_Matrix[i][j] = 0;
+                        }
 					}
 				}
 			}
+            if(curser == 1){
+                if(k == 1000){
+                    k = 0;
+                }
+                usleep(1000);
+                if(Draw_Matrix[i][j] == 0){
+                   Draw_Matrix[i][j] = 1;
+                }
+                else {
+                   Draw_Matrix[i][j] = 0;
+                }
+                k++;
+            }
             Count_total++;
             Count_total %= 10000;
             FND[0] = Count_total / 1000;
