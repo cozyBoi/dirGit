@@ -212,11 +212,11 @@ void Clock_FND_set_to_borad_time(){
     for(i = 0; 1; i++){
         if(buffer[i] == ':') break;
     }
-    FND[0] = buffer[i-2];
-    FND[1] = buffer[i-1];
+    FND[0] = buffer[i-2] - 0x30;
+    FND[1] = buffer[i-1] - 0x30;
     //skip 2 which is ':'
-    FND[3] = buffer[i+1];
-    FND[4] = buffer[i+2];
+    FND[3] = buffer[i+1] - 0x30;
+    FND[4] = buffer[i+2] - 0x30;
 }
 
 int main() {
