@@ -259,7 +259,8 @@ int main() {
 	int i, k;
 	int dev;
 	int buff_size;
-	unsigned char push_sw_buff[MAX_BUTTON];
+    unsigned char push_sw_buff[MAX_BUTTON];
+    unsigned char prev_push_sw_buff[MAX_BUTTON];
 
 	dev = open("/dev/fpga_push_switch", O_RDWR);
 	if (dev<0) {
@@ -294,16 +295,20 @@ int main() {
             }
 		}
         //printf("before read\n");
+        
+        
+        memcpy(prev_push_sw_buff, push_sw_buff, buff_size);
 		read(dev, &push_sw_buff, buff_size);
         //printf("after read\n");
-        usleep(250*1000);
+        
+        usleep(1000);
 		if (mode == 0) {
 			//boradÀÇ ½Ã°£À» °¡Á®¿Í¾ßÇÔ
             if(firstExec){
                 Clock_FND_set_to_borad_time();
                 firstExec = 0;
             }
-			if (push_sw_buff[0] == 1) {
+			if (push_sw_buff[0] == 1 && prev_push_sw_buff[0] != 1) {
 				Text_mode = ~Text_mode;
                 push_sw_buff[0] = 0;
 			}
@@ -637,7 +642,12 @@ int main() {
                 Count_total++;
 			}
 			else if (push_sw_buff[6] == 1) {
-				Draw_Matrix[y][x] = 0;
+                int i, j;
+                for(i = 0; i < 10; i++){
+                    for(j = 0; j < 7; j++){
+                        Draw_Matrix[y][x] = 0;
+                    }
+                }
                 Count_total++;
 			}
 			else if (push_sw_buff[7] == 1) {
@@ -691,20 +701,22 @@ int main() {
             out_to_LED(led1);
         }
         else if(mode == 0 && Text_mode != 0){
+            
             if(led_mode == 1){
                 out_to_LED(led3);
-                if(j == 1000){
+                if(j == 500){
                     j = 0;
                     led_mode = 0;
                 }
             }
             else{
                 out_to_LED(led4);
-                if(j == 1000){
+                if(j == 500){
                     j = 0;
                     led_mode = 1;
                 }
             }
+            
             usleep(1000);
             j++;
         }
