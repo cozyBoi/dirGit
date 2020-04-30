@@ -241,7 +241,7 @@ int main() {
 	buff_size = sizeof(push_sw_buff);
 	//dev open
 	
-	while (1) {
+	while (!quit) {
 		rd = read(fd, ev, size * BUFF_SIZE);
 		//event0 read
 
@@ -273,21 +273,23 @@ int main() {
             }
 			if (push_sw_buff[0] == 1) {
 				Text_mode = 0;
+                push_sw_buff[0] = 1;
 			}
 			else if (push_sw_buff[1] == 1) {
                 Clock_FND_set_to_borad_time();
+                push_sw_buff[1] = 1;
 			}
 			else if (push_sw_buff[2] == 1) {
-                while(push_sw_buff[2] == 1);
                 clock_plus_hour();
                 printf("plus hour\n");
                 Text_mode = 1;
+                push_sw_buff[2] = 1;
 			}
 			else if (push_sw_buff[3] == 1) {
-                while(push_sw_buff[3] == 1);
 				clock_plus_minute();
                 printf("plus minute\n");
                 Text_mode = 1;
+                push_sw_buff[3] = 1;
 			}
             out_to_FND(FND);
 		}
