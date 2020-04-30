@@ -207,7 +207,7 @@ void out_to_Matrix(char matrix[10][7]) {
     
 	for (i = 0; i < 10; i++) {
 		fpga_data[i] = arr_to_int(matrix[i]);
-        printf("%d ", fpga_data);
+        printf("%d ", fpga_data[i]);
 	}
     printf("\n");
     //
